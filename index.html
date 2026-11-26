@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#171717">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <title>Control de ventas - Herramientas Industriales</title>
 <style>
 :root{--bg:#f3f4f6;--card:#fff;--ink:#171717;--muted:#6b7280;--gold:#b58a32;--line:#e5e7eb;--green:#147d4b;--red:#b42318}
@@ -111,12 +115,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 const firebaseConfig = {
- apiKey: "AIzaSyCqebwcQJMMdRk8MIMUnkh-E_Q5xPHZS7s",
+ apiKey: "AIzaSyCvYT3OdETSAr96zPqbBSutRVdNFwb8DSs",
  authDomain: "herramientas-industriale-c86cd.firebaseapp.com",
  projectId: "herramientas-industriale-c86cd",
  storageBucket: "herramientas-industriale-c86cd.firebasestorage.app",
  messagingSenderId: "552419654830",
- appId: "1:552419654830:web:5a0cb3e78221fdf17d813f"
+ appId: "1:552419654830:android:116f5f19f066c1f47d813f"
 };
 const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
 try { await enableIndexedDbPersistence(db); } catch(e) { console.info('Persistencia local no disponible:',e.code); }
@@ -176,5 +180,10 @@ $('backup').onclick=()=>download('copia_control_ventas.json',JSON.stringify(stat
 $('exportCsv').onclick=()=>{let lines=[['Fecha','Producto','Cantidad','Precio unitario','Total','Cliente','Telefono','Recibido','Pendiente'],...state.sales.map(s=>[s.date,s.product,s.qty,s.price,s.total,s.customer,s.phone,s.paid,s.due])];let csv='\ufeff'+lines.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');download('ventas.csv',csv,'text/csv;charset=utf-8')};
 function download(name,data,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 $('restore').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!d.products||!d.sales)throw 0;if(!confirm('Esto reemplazará los datos actuales en Firebase. ¿Continuar?'))return;state=d;persist();fillSelects();render();alert('Copia restaurada y enviada a Firebase.')}catch(err){alert('El archivo no parece ser una copia válida.')}e.target.value=''};
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(console.error));
+}
 </script>
 </body></html>
